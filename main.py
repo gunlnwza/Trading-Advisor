@@ -12,12 +12,14 @@ def get_advice():
     to_symbol = stringvar_quote_currency.get()
 
     data = get_data(timeframe, from_symbol, to_symbol)
+    if data["status"] != "ok":
+        print("An error occured")
+        return
     df = make_df(data)
 
-    draw_price(price_df=df, x="datetime", y="close", title=f"{timeframe} {from_symbol} {to_symbol}")
     advice = tell_buy_or_sell(df)
-
-    label_result.config(text=advice)
+    label_result.config(text=f"You should {advice} {timeframe} {from_symbol}/{to_symbol} !")
+    draw_price(price_df=df, x="datetime", y="close", title=f"{timeframe} {from_symbol}/{to_symbol}")
 
 
 window = tk.Tk()
@@ -33,20 +35,23 @@ quote_currencies = base_currencies.copy()
 stringvar_base_currency = tk.StringVar(value=base_currencies[0])
 stringvar_quote_currency = tk.StringVar(value=quote_currencies[0])
 
+timeframes = ["M1", "M5", "M15", "M30", "H1", "H4", "D1", "W1", "MO1"]
+stringvar_timeframe = tk.StringVar(value=timeframes[0])
+
 label_pair = tk.Label(master=frame_infomation, text="Pair:")
 optionmenu_base_currency = tk.OptionMenu(frame_infomation, stringvar_base_currency, *base_currencies)
 optionmenu_quote_currency = tk.OptionMenu(frame_infomation, stringvar_quote_currency, *quote_currencies)
+optionmenu_base_currency.config(width=5)
+optionmenu_quote_currency.config(width=5)
 label_pair.grid(row=0, column=0, sticky="e")
-optionmenu_base_currency.grid(row=0, column=1, padx=10)
-optionmenu_quote_currency.grid(row=0, column=2)
-
-timeframes = ["D1", "W1", "M1"]
-stringvar_timeframe = tk.StringVar(value=timeframes[0])
+optionmenu_base_currency.grid(row=0, column=1, sticky="ew", padx=5)
+optionmenu_quote_currency.grid(row=0, column=2, sticky="ew")
 
 label_timeframe = tk.Label(frame_infomation, text="Timeframe:")
-entry_timeframe = tk.OptionMenu(frame_infomation, stringvar_timeframe, *timeframes)
+optionmenu_timeframe = tk.OptionMenu(frame_infomation, stringvar_timeframe, *timeframes)
+optionmenu_timeframe.config(width=5)
 label_timeframe.grid(row=2, column=0, sticky="e")
-entry_timeframe.grid(row=2, column=1)
+optionmenu_timeframe.grid(row=2, column=1, sticky="ew", padx=5)
 
 frame_infomation.pack(padx=10, pady=10)
 
@@ -57,7 +62,7 @@ button_ask.pack(pady=(0, 10))
 
 
 # the label part
-label_result = tk.Label(window, text="Advice")
+label_result = tk.Label(window, text="...")
 label_result.pack()
 
 

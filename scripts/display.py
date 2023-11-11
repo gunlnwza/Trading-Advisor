@@ -9,4 +9,4 @@ def draw_price(price_df, x="datetime", y="close", title=""):
     plt.xticks(rotation=30)
     plt.title(title)
     
-    plt.show()
+    plt.show(block=False)
