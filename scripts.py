@@ -55,14 +55,14 @@ def load_data(filename="temp.json"):
     return data
 
 
-def get_df(timeframe, from_symbol, to_symbol):
+def get_df(timeframe="D1", from_symbol="EUR", to_symbol="USD"):
     # main get_df function
 
     data = get_data(timeframe, from_symbol, to_symbol)
     meta_data, dates = list(data.values())
     rows = []
 
-    for date, ohlc in dates.items():
+    for date, ohlc in list(dates.items())[::-1]:
         row = {"date": date, "open": ohlc["1. open"], "high": ohlc["2. high"], "low": ohlc["3. low"], "close": ohlc["4. close"]}
         rows.append(row)
 
@@ -79,7 +79,7 @@ def get_df_from_filename(filename="temp.json"):
     meta_data, dates = list(data.values())
     rows = []
 
-    for date, ohlc in dates.items():
+    for date, ohlc in list(dates.items())[::-1]:
         row = {"date": date, "open": ohlc["1. open"], "high": ohlc["2. high"], "low": ohlc["3. low"], "close": ohlc["4. close"]}
         rows.append(row)
 
@@ -92,24 +92,24 @@ def get_df_from_filename(filename="temp.json"):
 # MODEL FUNCTIONS ------------------------------------------------------------
 
 
-def preprocess(prices):
-    df = pd.DataFrame()
+def preprocess(df):
+    # return a df with all the necessary features and target for training, also drop rows with nan values
+    
+    new_df = df.copy()
+    new_df = new_df[["close"]]
+    new_df["close-1"] = new_df["close"].shift(-1)
+    new_df.dropna(inplace=True)
 
-    df["Date"] = prices.keys()
-
-    return df
+    return new_df
 
 
-def train_and_show_future(timeframe, from_symbol, to_symbol):
+def train_and_show_future():
+    # TODO: make 2 separate functions: (return a trained model) and (plotting the predictions)
+
+    df = get_df_from_filename()
+    df = preprocess(df)
+    print(df)
     model = RandomForestRegressor(n_estimators=100, min_samples_split=10, random_state=0)
 
-    print("\rGetting Price", end="")
-    prices = get_prices(timeframe, from_symbol, to_symbol)
 
-    print("\rPreprocessing", end="")
-    df = preprocess(prices)
-    print("\r", end="")
-
-    print(df)
-
-
+train_and_show_future()
