@@ -11,7 +11,7 @@ import json
 # PRICE FUNCTIONS ------------------------------------------------------------
 
 
-def get_prices(timeframe="D1", from_symbol="EUR", to_symbol="USD"):
+def get_data(timeframe="D1", from_symbol="EUR", to_symbol="USD"):
     # get data from api and return the prices
 
     if timeframe == "M1":
@@ -27,9 +27,7 @@ def get_prices(timeframe="D1", from_symbol="EUR", to_symbol="USD"):
     req = requests.get(url)
     data = req.json()
 
-    prices = list(data.values())[1]
-
-    return prices
+    return data
 
 
 def save_data(timeframe="D1", from_symbol="EUR", to_symbol="USD", filename="temp.json"):
@@ -57,13 +55,38 @@ def load_data(filename="temp.json"):
     return data
 
 
-def load_prices(filename="temp.json"):
-    # load the price from saved data in directory
+def get_df(timeframe, from_symbol, to_symbol):
+    # main get_df function
 
-    data = load_data(filename)
-    prices = list(data.values())[1]
+    data = get_data(timeframe, from_symbol, to_symbol)
+    meta_data, dates = list(data.values())
+    rows = []
 
-    return prices
+    for date, ohlc in dates.items():
+        row = {"date": date, "open": ohlc["1. open"], "high": ohlc["2. high"], "low": ohlc["3. low"], "close": ohlc["4. close"]}
+        rows.append(row)
+
+    df = pd.DataFrame(rows)
+    df["date"] = pd.to_datetime(df["date"])
+
+    return df
+
+
+def get_df_from_filename(filename="temp.json"):
+    # get_df function for debugging
+
+    data = load_data("temp.json")
+    meta_data, dates = list(data.values())
+    rows = []
+
+    for date, ohlc in dates.items():
+        row = {"date": date, "open": ohlc["1. open"], "high": ohlc["2. high"], "low": ohlc["3. low"], "close": ohlc["4. close"]}
+        rows.append(row)
+
+    df = pd.DataFrame(rows)
+    df["date"] = pd.to_datetime(df["date"])
+
+    return df
 
 
 # MODEL FUNCTIONS ------------------------------------------------------------
@@ -88,4 +111,5 @@ def train_and_show_future(timeframe, from_symbol, to_symbol):
     print("\r", end="")
 
     print(df)
+
 
