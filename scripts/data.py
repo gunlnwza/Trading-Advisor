@@ -4,7 +4,7 @@ import json
 
 
 def get_data(timeframe="D1", from_symbol="EUR", to_symbol="USD"):
-    # get data from api and return the prices
+    # get data from api
 
     if timeframe == "M1":
         function = "FX_MONTHLY"
@@ -47,10 +47,7 @@ def load_data(filename="temp.json"):
     return data
 
 
-def get_df(timeframe="D1", from_symbol="EUR", to_symbol="USD"):
-    # main get_df function that makes api call
-
-    data = get_data(timeframe, from_symbol, to_symbol)
+def make_df(data):
     meta_data, dates = list(data.values())
     rows = []
 
@@ -70,24 +67,19 @@ def get_df(timeframe="D1", from_symbol="EUR", to_symbol="USD"):
     return df
 
 
+def get_df(timeframe="D1", from_symbol="EUR", to_symbol="USD"):
+    # main get_df function that makes api call
+
+    data = get_data(timeframe, from_symbol, to_symbol)
+    df = make_df(data)
+
+    return df
+
+
 def get_df_from_filename(filename="temp.json"):
     # get_df function for debugging
 
     data = load_data("temp.json")
-    meta_data, dates = list(data.values())
-    rows = []
-
-    for date, ohlc in list(dates.items())[::-1]:
-        row = {
-            "date": date, 
-            "open": float(ohlc["1. open"]), 
-            "high": float(ohlc["2. high"]), 
-            "low": float(ohlc["3. low"]), 
-            "close": float(ohlc["4. close"])
-        }
-        rows.append(row)
-
-    df = pd.DataFrame(rows)
-    df["date"] = pd.to_datetime(df["date"])
+    df = make_df(data)
 
     return df
