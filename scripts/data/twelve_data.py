@@ -3,7 +3,7 @@ import requests
 import json
 
 
-def get_data(timeframe="D1", from_symbol="EUR", to_symbol="USD", outputsize=100, debug=False):
+def api_get_data(timeframe="D1", from_symbol="EUR", to_symbol="USD", outputsize=100, debug=False):
     # get data from twelve data api
 
     translation = {
@@ -54,10 +54,10 @@ def make_df(data):
     return df
 
 
-def get_df(timeframe="D1", from_symbol="EUR", to_symbol="USD"):
+def api_get_df(timeframe="D1", from_symbol="EUR", to_symbol="USD"):
     # main get_df function that makes api call
 
-    data = get_data(timeframe, from_symbol, to_symbol)
+    data = api_get_data(timeframe, from_symbol, to_symbol)
     df = make_df(data)
 
     return df

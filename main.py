@@ -1,9 +1,9 @@
 import tkinter as tk
 import random
 
-from scripts.data.twelve_data import get_data, make_df
-from scripts.display import draw_price
-from scripts.model import tell_buy_or_sell
+from scripts.data.twelve_data import api_get_data, make_df
+from scripts.display import show_future, draw_price
+from scripts.model import get_model
 
 
 def get_advice():
@@ -15,15 +15,16 @@ def get_advice():
         label_result.config(text="You must select different currencies")
         return
     
-    data = get_data(timeframe, from_symbol, to_symbol)
+    data = api_get_data(timeframe, from_symbol, to_symbol)
     if data["status"] != "ok":
         label_result.config(text="An error occured")
         return
     
     df = make_df(data)
+    model = get_model(df)
 
-    advice = tell_buy_or_sell(df)
-    
+    advice = "-"
+
     if advice == "BUY":
         fg = "green"
     elif advice == "SELL":
@@ -34,8 +35,9 @@ def get_advice():
 
     text = f"You should {advice} {timeframe} {from_symbol}/{to_symbol} !"
     label_result.config(text=text)
-    
-    draw_price(price_df=df, x="datetime", y="close", title=f"{timeframe} {from_symbol}/{to_symbol}")
+
+    title = f"{to_symbol} {from_symbol}/{to_symbol}"
+    draw_price(df, title=title)
 
 
 window = tk.Tk()
@@ -48,11 +50,11 @@ frame_infomation = tk.Frame()
 
 base_currencies = ["USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "THB"]
 quote_currencies = base_currencies.copy()
-stringvar_base_currency = tk.StringVar(value=base_currencies[0])
-stringvar_quote_currency = tk.StringVar(value=quote_currencies[0])
+stringvar_base_currency = tk.StringVar(value="EUR")
+stringvar_quote_currency = tk.StringVar(value="USD")
 
 timeframes = ["M1", "M5", "M15", "M30", "H1", "H4", "D1", "W1", "MO1"]
-stringvar_timeframe = tk.StringVar(value=timeframes[0])
+stringvar_timeframe = tk.StringVar(value="D1")
 
 label_pair = tk.Label(master=frame_infomation, text="Pair:")
 optionmenu_base_currency = tk.OptionMenu(frame_infomation, stringvar_base_currency, *base_currencies)
