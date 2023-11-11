@@ -48,9 +48,6 @@ def load_data(filename="temp.json"):
 
 
 def make_df(data):
-    print(data)
-    print()
-    print(list(data.values()))
     meta_data, dates = list(data.values())
     rows = []
 
