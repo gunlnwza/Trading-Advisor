@@ -56,14 +56,20 @@ def load_data(filename="temp.json"):
 
 
 def get_df(timeframe="D1", from_symbol="EUR", to_symbol="USD"):
-    # main get_df function
+    # main get_df function that makes api call
 
     data = get_data(timeframe, from_symbol, to_symbol)
     meta_data, dates = list(data.values())
     rows = []
 
     for date, ohlc in list(dates.items())[::-1]:
-        row = {"date": date, "open": ohlc["1. open"], "high": ohlc["2. high"], "low": ohlc["3. low"], "close": ohlc["4. close"]}
+        row = {
+            "date": date, 
+            "open": float(ohlc["1. open"]), 
+            "high": float(ohlc["2. high"]), 
+            "low": float(ohlc["3. low"]), 
+            "close": float(ohlc["4. close"])
+        }
         rows.append(row)
 
     df = pd.DataFrame(rows)
@@ -80,7 +86,13 @@ def get_df_from_filename(filename="temp.json"):
     rows = []
 
     for date, ohlc in list(dates.items())[::-1]:
-        row = {"date": date, "open": ohlc["1. open"], "high": ohlc["2. high"], "low": ohlc["3. low"], "close": ohlc["4. close"]}
+        row = {
+            "date": date, 
+            "open": float(ohlc["1. open"]), 
+            "high": float(ohlc["2. high"]), 
+            "low": float(ohlc["3. low"]), 
+            "close": float(ohlc["4. close"])
+        }
         rows.append(row)
 
     df = pd.DataFrame(rows)
@@ -103,13 +115,54 @@ def preprocess(df):
     return new_df
 
 
+def get_Xy(df):
+    # separate X and y, y is the rightmost column
+
+    X = df.iloc[:, :-1]
+    y = df.iloc[:, -1]
+    return X, y
+
+
 def train_and_show_future():
     # TODO: make 2 separate functions: (return a trained model) and (plotting the predictions)
 
-    df = get_df_from_filename()
+    df = get_df_from_filename()  # ***
     df = preprocess(df)
-    print(df)
+    X, y = get_Xy(df)
+
+    train_test_index = 80
+
+    X_train, X_test = X.iloc[:train_test_index], X.iloc[train_test_index:]
+    y_train, y_test = y.iloc[:train_test_index], y.iloc[train_test_index:]
+
     model = RandomForestRegressor(n_estimators=100, min_samples_split=10, random_state=0)
+    model.fit(X_train, y_train)
+
+    y_predict = model.predict(X_test)
+
+    plt.figure(figsize=(8, 6))
+    plt.xticks(rotation=30)
+    plt.plot(df["close"])
+    
+    plt.plot([i + train_test_index + 1 for i in range(len(y_test))], y_test)
+    plt.plot([i + train_test_index + 1 for i in range(len(y_predict))], y_predict)
+    plt.legend(["Close", "Test", "Predict"])
+    
+    plt.show()
+
+
+# GRAPH FUNCTIONS ------------------------------------------------------------
+
+
+def draw_close(price_df, title=""):
+    # show a graph of the close price
+
+    plt.figure(figsize=(8, 6))
+    plt.plot(price_df["date"], price_df["close"])
+    plt.xticks(rotation=30)
+    plt.title(title)
+    
+    plt.show()
 
 
 train_and_show_future()
