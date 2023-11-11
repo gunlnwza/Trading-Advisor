@@ -4,8 +4,6 @@ import random
 
 from sklearn.ensemble import RandomForestRegressor
 
-from scripts.data import get_df_from_filename
-
 
 def preprocess(df):
     # return a df with all the necessary features and target for training, also drop rows with nan values

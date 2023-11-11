@@ -1,20 +1,20 @@
 import tkinter as tk
 import random
 
-from scripts.data import get_data, make_df
-from scripts.display import draw_close
+from scripts.data.twelve_data import get_data, make_df
+from scripts.display import draw_price
 from scripts.model import tell_buy_or_sell
 
 
 def get_advice():
     timeframe = stringvar_timeframe.get()
-    from_symbol = stringvar_base_currency.get() 
+    from_symbol = stringvar_base_currency.get()
     to_symbol = stringvar_quote_currency.get()
 
     data = get_data(timeframe, from_symbol, to_symbol)
     df = make_df(data)
 
-    draw_close(df, f"{timeframe} {from_symbol} {to_symbol}")
+    draw_price(price_df=df, x="datetime", y="close", title=f"{timeframe} {from_symbol} {to_symbol}")
     advice = tell_buy_or_sell(df)
 
     label_result.config(text=advice)
