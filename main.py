@@ -3,6 +3,7 @@ import random
 
 from scripts.data import get_data, make_df
 from scripts.display import draw_close
+from scripts.model import tell_buy_or_sell
 
 
 def get_advice():
@@ -14,6 +15,7 @@ def get_advice():
     df = make_df(data)
 
     draw_close(df, f"{timeframe} {from_symbol} {to_symbol}")
+    tell_buy_or_sell(df)
 
 
 window = tk.Tk()
@@ -24,9 +26,9 @@ window.geometry("300x150")
 # The dropdown menus part
 frame_infomation = tk.Frame()
 
-base_currencies = ["USD", "EUR", "GBP", "AUD"]
+base_currencies = ["USD", "AUD", "CAD", "CHF", "EUR", "GBP", "JPY", "THB"]
 quote_currencies = base_currencies.copy()
-stringvar_base_currency = tk.StringVar(value=base_currencies[1])
+stringvar_base_currency = tk.StringVar(value=base_currencies[0])
 stringvar_quote_currency = tk.StringVar(value=quote_currencies[0])
 
 label_pair = tk.Label(master=frame_infomation, text="Pair:")
@@ -50,6 +52,11 @@ frame_infomation.pack(padx=10, pady=10)
 # the button part
 button_ask = tk.Button(master=window, text="Ask", width=6, command=get_advice)
 button_ask.pack(pady=(0, 10))
+
+
+# the label part
+label_result = tk.Label(window, text="Result")
+label_result.pack()
 
 
 window.mainloop()

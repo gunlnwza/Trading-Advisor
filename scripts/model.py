@@ -34,10 +34,9 @@ def get_Xy(df):
     return X, y
 
 
-def train_and_show_future():
+def train_and_show_future(df):
     # TODO: make 2 separate functions: (return a trained model) and (plotting the predictions)
 
-    df = get_df_from_filename()  # ***
     df = preprocess(df)
     X, y = get_Xy(df)
 
@@ -46,7 +45,7 @@ def train_and_show_future():
     X_train, X_test = X.iloc[:train_test_index], X.iloc[train_test_index:]
     y_train, y_test = y.iloc[:train_test_index], y.iloc[train_test_index:]
 
-    model = RandomForestRegressor(n_estimators=100, min_samples_split=10, random_state=0)
+    model = RandomForestRegressor(n_estimators=100, random_state=0)
     model.fit(X_train, y_train)
 
     y_predict = model.predict(X_test)
@@ -60,3 +59,7 @@ def train_and_show_future():
     plt.legend(["Close", "Test", "Predict"])
     
     plt.show()
+
+
+def tell_buy_or_sell(df):
+    result = ""
