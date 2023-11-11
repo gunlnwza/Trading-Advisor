@@ -12,6 +12,8 @@ import json
 
 
 def get_prices(timeframe="D1", from_symbol="EUR", to_symbol="USD"):
+    # get data from api and return the prices
+
     if timeframe == "M1":
         function = "FX_MONTHLY"
     elif timeframe == "W1":
@@ -31,6 +33,8 @@ def get_prices(timeframe="D1", from_symbol="EUR", to_symbol="USD"):
 
 
 def save_data(timeframe="D1", from_symbol="EUR", to_symbol="USD", filename="temp.json"):
+    # save data from api as json to directory
+
     if timeframe == "M1":
         function = "FX_MONTHLY"
     elif timeframe == "W1":
@@ -47,11 +51,15 @@ def save_data(timeframe="D1", from_symbol="EUR", to_symbol="USD", filename="temp
 
 
 def load_data(filename="temp.json"):
+    # load the saved data in directory
+
     data = json.load(open(filename))
     return data
 
 
 def load_prices(filename="temp.json"):
+    # load the price from saved data in directory
+
     data = load_data(filename)
     prices = list(data.values())[1]
 
