@@ -3,20 +3,29 @@ import requests
 import json
 
 
-def get_data(timeframe="D1", from_symbol="EUR", to_symbol="USD", debug=False):
+def get_data(timeframe="D1", from_symbol="EUR", to_symbol="USD", outputsize=100, debug=False):
     # get data from twelve data api
 
-    if timeframe == "MO1":
-        interval = "1month"
-    elif timeframe == "W1":
-        interval = "1week"
+    translation = {
+        "M1": "1min",
+        "M5": "5min",
+        "M15": "15min",
+        "M30": "30min",
+        "H1": "1hour",
+        "H4": "4hour",
+        "D1": "1day",
+        "W1": "1week",
+        "MO1": "1month"
+    }
+    if timeframe in translation:
+        interval = translation[timeframe]
     else:
         interval = "1day"
 
     symbol = f"{from_symbol}/{to_symbol}"
 
     api_key = "0f84a727ff3d48aebe7ac0fd79d38fde"
-    url = f"https://api.twelvedata.com/time_series?apikey={api_key}&interval={interval}&symbol={symbol}&format=JSON"
+    url = f"https://api.twelvedata.com/time_series?apikey={api_key}&interval={interval}&symbol={symbol}&outputsize={outputsize}&format=JSON"
 
     req = requests.get(url)
     data = req.json()
@@ -35,21 +44,12 @@ def load_data(filename="temp.json"):
 
 
 def make_df(data):
-    meta_data, dates = list(data.values())
-    rows = []
+    meta, values, status = list(data.values())
 
-    for date, ohlc in list(dates.items())[::-1]:
-        row = {
-            "date": date, 
-            "open": float(ohlc["1. open"]), 
-            "high": float(ohlc["2. high"]), 
-            "low": float(ohlc["3. low"]), 
-            "close": float(ohlc["4. close"])
-        }
-        rows.append(row)
-
-    df = pd.DataFrame(rows)
-    df["date"] = pd.to_datetime(df["date"])
+    df = pd.DataFrame(values)
+    df["datetime"] = pd.to_datetime(df["datetime"])
+    for col in ("open", "high", "low", "close"):
+        df[col] = pd.to_numeric(df[col])
 
     return df
 
@@ -61,5 +61,3 @@ def get_df(timeframe="D1", from_symbol="EUR", to_symbol="USD"):
     df = make_df(data)
 
     return df
-
-
