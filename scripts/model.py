@@ -61,5 +61,5 @@ def train_and_show_future(df):
 
 
 def tell_buy_or_sell(df):
-    advice = random.choice(["Buy", "Sell"])
+    advice = random.choice(["BUY", "SELL"])
     return advice

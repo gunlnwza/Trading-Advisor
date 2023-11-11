@@ -11,14 +11,30 @@ def get_advice():
     from_symbol = stringvar_base_currency.get()
     to_symbol = stringvar_quote_currency.get()
 
+    if from_symbol == to_symbol:
+        label_result.config(text="You must select different currencies")
+        return
+    
     data = get_data(timeframe, from_symbol, to_symbol)
     if data["status"] != "ok":
-        print("An error occured")
+        label_result.config(text="An error occured")
         return
+    
     df = make_df(data)
 
     advice = tell_buy_or_sell(df)
-    label_result.config(text=f"You should {advice} {timeframe} {from_symbol}/{to_symbol} !")
+    
+    if advice == "BUY":
+        fg = "green"
+    elif advice == "SELL":
+        fg = "red"
+    else:
+        fg = "black"
+    label_result.config(fg=fg)
+
+    text = f"You should {advice} {timeframe} {from_symbol}/{to_symbol} !"
+    label_result.config(text=text)
+    
     draw_price(price_df=df, x="datetime", y="close", title=f"{timeframe} {from_symbol}/{to_symbol}")
 
 
