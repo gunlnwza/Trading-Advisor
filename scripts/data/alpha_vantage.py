@@ -4,7 +4,7 @@ import json
 
 
 def get_data(timeframe="D1", from_symbol="EUR", to_symbol="USD"):
-    # get data from api
+    # get data from alpha vantage api
 
     if timeframe == "M1":
         function = "FX_MONTHLY"
@@ -23,7 +23,7 @@ def get_data(timeframe="D1", from_symbol="EUR", to_symbol="USD"):
 
 
 def save_data(timeframe="D1", from_symbol="EUR", to_symbol="USD", filename="temp.json"):
-    # save data from api as json to directory
+    # save data from alpha vantage api as json to directory
 
     if timeframe == "M1":
         function = "FX_MONTHLY"
@@ -40,14 +40,10 @@ def save_data(timeframe="D1", from_symbol="EUR", to_symbol="USD", filename="temp
     json.dump(data, open(filename, "w"))
 
 
-def load_data(filename="temp.json"):
-    # load the saved data in directory
-
-    data = json.load(open(filename))
-    return data
-
-
 def make_df(data):
+    print(data)
+    print()
+    print(list(data.values()))
     meta_data, dates = list(data.values())
     rows = []
 
@@ -71,15 +67,6 @@ def get_df(timeframe="D1", from_symbol="EUR", to_symbol="USD"):
     # main get_df function that makes api call
 
     data = get_data(timeframe, from_symbol, to_symbol)
-    df = make_df(data)
-
-    return df
-
-
-def get_df_from_filename(filename="temp.json"):
-    # get_df function for debugging
-
-    data = load_data("temp.json")
     df = make_df(data)
 
     return df

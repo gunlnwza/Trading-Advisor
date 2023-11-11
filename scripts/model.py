@@ -1,9 +1,10 @@
 import matplotlib.pyplot as plt
 import pandas as pd
+import random
 
 from sklearn.ensemble import RandomForestRegressor
 
-from data import get_df_from_filename
+from scripts.data import get_df_from_filename
 
 
 def preprocess(df):
@@ -62,4 +63,5 @@ def train_and_show_future(df):
 
 
 def tell_buy_or_sell(df):
-    result = ""
+    advice = random.choice(["Buy", "Sell"])
+    return advice

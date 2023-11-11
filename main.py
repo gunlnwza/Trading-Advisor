@@ -15,7 +15,9 @@ def get_advice():
     df = make_df(data)
 
     draw_close(df, f"{timeframe} {from_symbol} {to_symbol}")
-    tell_buy_or_sell(df)
+    advice = tell_buy_or_sell(df)
+
+    label_result.config(text=advice)
 
 
 window = tk.Tk()
@@ -55,7 +57,7 @@ button_ask.pack(pady=(0, 10))
 
 
 # the label part
-label_result = tk.Label(window, text="Result")
+label_result = tk.Label(window, text="Advice")
 label_result.pack()
 
 
