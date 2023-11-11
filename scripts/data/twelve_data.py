@@ -3,41 +3,28 @@ import requests
 import json
 
 
-def get_data(timeframe="D1", from_symbol="EUR", to_symbol="USD"):
-    # get data from alpha vantage api
+def get_data(timeframe="D1", from_symbol="EUR", to_symbol="USD", debug=False):
+    # get data from twelve data api
 
-    if timeframe == "M1":
-        function = "FX_MONTHLY"
+    if timeframe == "MO1":
+        interval = "1month"
     elif timeframe == "W1":
-        function = "FX_WEEKLY"
+        interval = "1week"
     else:
-        function = "FX_DAILY"
+        interval = "1day"
 
-    api_key = "FTNDJSKCBSX6HZBX"
-    url = f"https://www.alphavantage.co/query?function={function}&from_symbol={from_symbol}&to_symbol={to_symbol}&apikey={api_key}"
+    symbol = f"{from_symbol}/{to_symbol}"
+
+    api_key = "0f84a727ff3d48aebe7ac0fd79d38fde"
+    url = f"https://api.twelvedata.com/time_series?apikey={api_key}&interval={interval}&symbol={symbol}&format=JSON"
 
     req = requests.get(url)
     data = req.json()
+
+    if debug:
+        json.dump(data, open("temp.json", "w"))
 
     return data
-
-
-def save_data(timeframe="D1", from_symbol="EUR", to_symbol="USD", filename="temp.json"):
-    # save data from alpha vantage api as json to directory
-
-    if timeframe == "M1":
-        function = "FX_MONTHLY"
-    elif timeframe == "W1":
-        function = "FX_WEEKLY"
-    else:
-        function = "FX_DAILY"
-
-    api_key = "FTNDJSKCBSX6HZBX"
-    url = f"https://www.alphavantage.co/query?function={function}&from_symbol={from_symbol}&to_symbol={to_symbol}&apikey={api_key}"
-
-    req = requests.get(url)
-    data = req.json()
-    json.dump(data, open(filename, "w"))
 
 
 def load_data(filename="temp.json"):
@@ -77,3 +64,5 @@ def get_df(timeframe="D1", from_symbol="EUR", to_symbol="USD"):
     df = make_df(data)
 
     return df
+
+
