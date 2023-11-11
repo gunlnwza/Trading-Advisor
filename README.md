@@ -1,3 +1,3 @@
-# Trading Notification for Line
+# The program
 
-I am experimenting on getting a good signal [here](https://www.kaggle.com/natachatteecharcharn/predicting-gold-prices/edit)
+It will load the price data from the internet. Then, train a Random Forest Regressor Model on the data. And finally telling how the market would behave in the future.
