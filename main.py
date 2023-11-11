@@ -1,13 +1,19 @@
 import tkinter as tk
 import random
 
+from scripts.data import get_data, make_df
+from scripts.display import draw_close
+
 
 def get_advice():
-    pair = stringvar_base_currency.get() + stringvar_quote_currency.get()
     timeframe = stringvar_timeframe.get()
+    from_symbol = stringvar_base_currency.get() 
+    to_symbol = stringvar_quote_currency.get()
 
-    advice = random.choice(["BUY", "SELL"])
-    print(advice, pair, timeframe)
+    data = get_data(timeframe, from_symbol, to_symbol)
+    df = make_df(data)
+
+    draw_close(df, f"{timeframe} {from_symbol} {to_symbol}")
 
 
 window = tk.Tk()
@@ -15,6 +21,7 @@ window.title("Trading Advisor")
 window.geometry("300x150")
 
 
+# The dropdown menus part
 frame_infomation = tk.Frame()
 
 base_currencies = ["USD", "EUR", "GBP", "AUD"]
@@ -40,8 +47,8 @@ entry_timeframe.grid(row=2, column=1)
 frame_infomation.pack(padx=10, pady=10)
 
 
+# the button part
 button_ask = tk.Button(master=window, text="Ask", width=6, command=get_advice)
-
 button_ask.pack(pady=(0, 10))
 
 
