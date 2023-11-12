@@ -3,42 +3,43 @@ import random
 
 from scripts.data.twelve_data import api_get_data, make_df, load_data
 from scripts.display import show_future, draw_price, show_future_rel_close
-from scripts.model import get_model
+from scripts.model import get_model, get_predictions
 
 
-def get_advice():
-    timeframe = stringvar_timeframe.get()
-    from_symbol = stringvar_base_currency.get()
-    to_symbol = stringvar_quote_currency.get()
-
-    if from_symbol == to_symbol:
-        label_result.config(text="You must select different currencies")
-        return
-
-    data = api_get_data(timeframe, from_symbol, to_symbol)
-    if data["status"] != "ok":
-        label_result.config(text="An error occured")
-        return
-
-    df = make_df(data)
-    model = get_model(df)
-
-    advice = "-"
-
+def update_label_advice(advice):
     if advice == "BUY":
         fg = "green"
     elif advice == "SELL":
         fg = "red"
     else:
         fg = "black"
-    label_result.config(fg=fg)
-
+    label_advice.config(fg=fg)
     text = f"You should {advice} {timeframe} {from_symbol}/{to_symbol} !"
-    label_result.config(text=text)
+    label_advice.config(text=text)
 
-    title = f"{to_symbol} {from_symbol}/{to_symbol}"
-    show_future_rel_close(model, df, predict_points=20, title=title)
 
+def button_ask_pressed():
+    timeframe = stringvar_timeframe.get()
+    from_symbol = stringvar_base_currency.get()
+    to_symbol = stringvar_quote_currency.get()
+
+    if from_symbol == to_symbol:
+        label_advice.config(text="You must select different currencies")
+        return
+
+    data = api_get_data(timeframe, from_symbol, to_symbol)
+    if data["status"] != "ok":
+        label_advice.config(text="An error occured: cannot get API data")
+        return
+
+    price_df = make_df(data)
+    model = get_model(price_df)
+
+    predictions = get_predictions(model, price_df)
+    
+    advice = "BUY"
+    update_label_advice(advice)
+    
 
 window = tk.Tk()
 window.title("Trading Advisor")
@@ -75,13 +76,13 @@ frame_infomation.pack(padx=10, pady=10)
 
 
 # the button part
-button_ask = tk.Button(master=window, text="Ask", width=6, command=get_advice)
+button_ask = tk.Button(master=window, text="Ask", width=6, command=button_ask_pressed)
 button_ask.pack(pady=(0, 10))
 
 
 # the label part
-label_result = tk.Label(window, text="...")
-label_result.pack()
+label_advice = tk.Label(window, text="...")
+label_advice.pack()
 
 
 window.mainloop()

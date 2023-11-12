@@ -65,5 +65,8 @@ def get_model_rel_close(price_df):
     return model
 
 
+def get_predictions(model, price_df):
+    pass
+
 def get_predictions_rel_close(model, price_df):
     pass
