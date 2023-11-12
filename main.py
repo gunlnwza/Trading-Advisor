@@ -2,8 +2,8 @@ import tkinter as tk
 import random
 
 from scripts.data.twelve_data import api_get_data, make_df, load_data
-from scripts.display import show_future, draw_price, show_future_rel_close
-from scripts.model import get_model, get_predictions
+from scripts.display import show_future, draw_price, show_future_rel_close, plot_price_and_predictions
+from scripts.model import get_model, get_predictions, get_model_rel_close, get_predictions_rel_close
 
 
 def update_label_advice(advice, timeframe, from_symbol, to_symbol):
@@ -13,15 +13,27 @@ def update_label_advice(advice, timeframe, from_symbol, to_symbol):
         fg = "red"
     else:
         fg = "black"
-    label_advice.config(fg=fg)
-    text = f"You should {advice} {timeframe} {from_symbol}/{to_symbol} !"
-    label_advice.config(text=text)
+
+    if advice == "BUY" or advice == "SELL":
+        text = f"You should {advice} {timeframe} {from_symbol}/{to_symbol} !"
+    else:
+        text = f"You should {advice}, for {timeframe} {from_symbol}/{to_symbol}"
+
+    label_advice.config(fg=fg, text=text)
 
 
 def get_advice(price_df, predictions):
-    # say BUY if price will go up, say SELL if price will go down
-    
-    pass
+    # say BUY if price will go up, say SELL if price will go down or say WAIT if price is the same
+
+    last_close = price_df["close"].iloc[-1]
+    last_prediction = predictions[-1]
+
+    if last_prediction > last_close:
+        return "BUY"
+    elif last_prediction < last_close:
+        return "SELL"
+    else:
+        return "WAIT"
 
 
 def button_ask_pressed():
@@ -30,22 +42,22 @@ def button_ask_pressed():
     to_symbol = stringvar_quote_currency.get()
 
     if from_symbol == to_symbol:
-        label_advice.config(text="You must select different currencies")
+        label_advice.config(fg="black", text="You must select different currencies")
         return
 
     data = api_get_data(timeframe, from_symbol, to_symbol)
     if data["status"] != "ok":
-        label_advice.config(text="An error occured: cannot get API data")
+        label_advice.config(fg="black", text="An error occured: cannot get API data")
         return
 
     price_df = make_df(data)
     model = get_model(price_df)
 
-    predictions = get_predictions(model, price_df)
-    print(predictions)
-    
+    predictions = get_predictions(model, price_df, predict_points=20)
+
     advice = get_advice(price_df, predictions)
     update_label_advice(advice, timeframe, from_symbol, to_symbol)
+    plot_price_and_predictions(price_df, predictions, title=f"{timeframe} {from_symbol}/{to_symbol}")
     
 
 window = tk.Tk()
