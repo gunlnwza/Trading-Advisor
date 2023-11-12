@@ -6,7 +6,7 @@ from scripts.display import show_future, draw_price, show_future_rel_close
 from scripts.model import get_model, get_predictions
 
 
-def update_label_advice(advice):
+def update_label_advice(advice, timeframe, from_symbol, to_symbol):
     if advice == "BUY":
         fg = "green"
     elif advice == "SELL":
@@ -16,6 +16,12 @@ def update_label_advice(advice):
     label_advice.config(fg=fg)
     text = f"You should {advice} {timeframe} {from_symbol}/{to_symbol} !"
     label_advice.config(text=text)
+
+
+def get_advice(price_df, predictions):
+    # say BUY if price will go up, say SELL if price will go down
+    
+    pass
 
 
 def button_ask_pressed():
@@ -36,9 +42,10 @@ def button_ask_pressed():
     model = get_model(price_df)
 
     predictions = get_predictions(model, price_df)
+    print(predictions)
     
-    advice = "BUY"
-    update_label_advice(advice)
+    advice = get_advice(price_df, predictions)
+    update_label_advice(advice, timeframe, from_symbol, to_symbol)
     
 
 window = tk.Tk()
