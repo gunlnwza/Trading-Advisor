@@ -1,9 +1,9 @@
 import tkinter as tk
 import random
 
-from scripts.data.twelve_data import api_get_data, make_df, load_data
-from scripts.display import show_future, draw_price, show_future_rel_close, plot_price_and_predictions
-from scripts.model import get_model, get_predictions, get_model_rel_close, get_predictions_rel_close
+from scripts.data.twelve_data import api_get_data, make_df
+from scripts.display import plot_price_and_predictions
+from scripts.model import get_model, get_predictions
 
 
 def update_label_advice(advice, timeframe, from_symbol, to_symbol):
