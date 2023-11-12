@@ -1,5 +1,4 @@
 import tkinter as tk
-import random
 
 from scripts.data.twelve_data import api_get_data, make_df
 from scripts.display import plot_price_and_predictions
