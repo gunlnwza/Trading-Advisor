@@ -2,7 +2,7 @@ import tkinter as tk
 import random
 
 from scripts.data.twelve_data import api_get_data, make_df, load_data
-from scripts.display import show_future, draw_price
+from scripts.display import show_future, draw_price, show_future_rel_close
 from scripts.model import get_model
 
 
@@ -14,14 +14,11 @@ def get_advice():
     if from_symbol == to_symbol:
         label_result.config(text="You must select different currencies")
         return
-    
-    """
+
     data = api_get_data(timeframe, from_symbol, to_symbol)
     if data["status"] != "ok":
         label_result.config(text="An error occured")
         return
-    """
-    data = load_data()
 
     df = make_df(data)
     model = get_model(df)
@@ -40,7 +37,7 @@ def get_advice():
     label_result.config(text=text)
 
     title = f"{to_symbol} {from_symbol}/{to_symbol}"
-    show_future(model, df, title=title)
+    show_future_rel_close(model, df, predict_points=20, title=title)
 
 
 window = tk.Tk()
