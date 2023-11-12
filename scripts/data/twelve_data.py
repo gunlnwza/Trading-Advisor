@@ -50,6 +50,8 @@ def make_df(data):
     df["datetime"] = pd.to_datetime(df["datetime"])
     for col in ("open", "high", "low", "close"):
         df[col] = pd.to_numeric(df[col])
+    df = df.iloc[::-1]
+    df = df.reset_index(drop=True)
 
     return df
 
