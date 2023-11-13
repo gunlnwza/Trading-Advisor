@@ -40,7 +40,6 @@ def show_future(model, price_df, predict_points=10, x="datetime", y="close", tit
     plt.title(title)
     plt.legend()
 
-    fig_manager = plt.get_current_fig_manager()
     plt.get_current_fig_manager().window.wm_geometry("+500+100")
     plt.show()
 
