@@ -5,6 +5,20 @@ from scripts.display import plot_price_and_predictions
 from scripts.model import get_model, get_predictions
 
 
+def get_advice(price_df, predictions):
+    # say BUY if price will go up, say SELL if price will go down or say WAIT if price is the same
+
+    last_close = price_df["close"].iloc[-1]
+    last_prediction = predictions[-1]
+
+    if last_prediction > last_close:
+        return "BUY"
+    elif last_prediction < last_close:
+        return "SELL"
+    else:
+        return "WAIT"
+
+
 def update_label_advice(advice, timeframe, from_symbol, to_symbol):
     if advice == "BUY":
         fg = "green"
@@ -21,20 +35,6 @@ def update_label_advice(advice, timeframe, from_symbol, to_symbol):
     label_advice.config(fg=fg, text=text)
 
 
-def get_advice(price_df, predictions):
-    # say BUY if price will go up, say SELL if price will go down or say WAIT if price is the same
-
-    last_close = price_df["close"].iloc[-1]
-    last_prediction = predictions[-1]
-
-    if last_prediction > last_close:
-        return "BUY"
-    elif last_prediction < last_close:
-        return "SELL"
-    else:
-        return "WAIT"
-
-
 def button_ask_pressed():
     timeframe = stringvar_timeframe.get()
     from_symbol = stringvar_base_currency.get()
@@ -44,7 +44,7 @@ def button_ask_pressed():
         label_advice.config(fg="black", text="You must select different currencies")
         return
 
-    data = api_get_data(timeframe, from_symbol, to_symbol)
+    data = api_get_data(timeframe, from_symbol, to_symbol, data_points=1000)
     if data["status"] != "ok":
         label_advice.config(fg="black", text="An error occured: cannot get API data")
         return
@@ -56,7 +56,7 @@ def button_ask_pressed():
 
     advice = get_advice(price_df, predictions)
     update_label_advice(advice, timeframe, from_symbol, to_symbol)
-    plot_price_and_predictions(price_df, predictions, title=f"{timeframe} {from_symbol}/{to_symbol}")
+    plot_price_and_predictions(price_df, predictions, plot_points=100, title=f"{timeframe} {from_symbol}/{to_symbol}")
     
 
 window = tk.Tk()

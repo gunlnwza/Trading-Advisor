@@ -3,7 +3,7 @@ import requests
 import json
 
 
-def api_get_data(timeframe="D1", from_symbol="EUR", to_symbol="USD", outputsize=100, debug=False):
+def api_get_data(timeframe="D1", from_symbol="EUR", to_symbol="USD", data_points=100, debug=False):
     # get data from twelve data api
 
     translation = {
@@ -25,7 +25,7 @@ def api_get_data(timeframe="D1", from_symbol="EUR", to_symbol="USD", outputsize=
     symbol = f"{from_symbol}/{to_symbol}"
 
     api_key = "0f84a727ff3d48aebe7ac0fd79d38fde"
-    url = f"https://api.twelvedata.com/time_series?apikey={api_key}&interval={interval}&symbol={symbol}&outputsize={outputsize}&format=JSON"
+    url = f"https://api.twelvedata.com/time_series?apikey={api_key}&interval={interval}&symbol={symbol}&outputsize={data_points}&format=JSON"
 
     req = requests.get(url)
     data = req.json()

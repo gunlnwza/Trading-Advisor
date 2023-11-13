@@ -45,7 +45,6 @@ def show_future(model, price_df, predict_points=10, x="datetime", y="close", tit
     plt.show()
 
 
-
 def show_future_rel_close(model, price_df, predict_points=10, x="datetime", y="close", title=""):
     # show the future predicted by model
 
@@ -73,10 +72,15 @@ def show_future_rel_close(model, price_df, predict_points=10, x="datetime", y="c
     plt.show()
 
 
-def plot_price_and_predictions(price_df, predictions, title=""):
+def plot_price_and_predictions(price_df, predictions, plot_points=None, title=""):
+    # plot the last <plot_points> of price
+    
     plt.figure(title, figsize=(8, 6))
     plt.title(title)
-    plt.plot(price_df["close"], label="Actual Close")
+    if plot_points:
+        plt.plot(price_df["close"].iloc[-plot_points:], label="Actual Close")
+    else:
+        plt.plot(price_df["close"], label="Actual Close")
 
     future_indices = [i + len(price_df) - 1 for i in range(len(predictions))]
     plt.plot(future_indices, predictions, label="Predicted Close", linestyle="--")
