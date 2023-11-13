@@ -74,7 +74,7 @@ def show_future_rel_close(model, price_df, predict_points=10, x="datetime", y="c
 def plot_price_and_predictions(price_df, predictions, plot_points=None, title=""):
     # plot the last <plot_points> of price
     
-    plt.figure(title, figsize=(8, 6))
+    plt.figure(figsize=(8, 6))
     plt.title(title)
     if plot_points:
         plt.plot(price_df["close"].iloc[-plot_points:], label="Actual Close")
